@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Happy 18th Birthday!</title>
     
-    <!-- Menggunakan Font Google yang elegan dan estetik -->
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
@@ -29,6 +28,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent; /* Hilangkan highlight biru di HP */
         }
 
         body {
@@ -40,7 +40,11 @@
             position: relative;
         }
 
-        /* Utilitas Teks */
+        /* Fix: Pastikan body bisa discroll */
+        body.noscroll {
+            overflow: hidden;
+        }
+
         h1, h2, h3 {
             font-family: 'Dancing Script', cursive;
             color: var(--deep-rose);
@@ -69,13 +73,14 @@
             to { opacity: 0; }
         }
 
-        /* Container Utama */
         .container {
             width: 100%;
             min-height: 100vh;
             position: relative;
-            overflow-y: auto;
+            /* Fix: Pastikan scroll bekerja */
+            overflow-y: auto; 
             overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* =========================================
@@ -142,18 +147,13 @@
             height: 100%;
             z-index: 8000;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             background: rgba(0,0,0,0.8);
             color: var(--white);
             text-align: center;
-            padding: 20px;
-        }
-
-        .intro-text-box {
-            max-width: 90%;
-            font-size: 1.2rem;
-            line-height: 1.6;
+            padding: 20px 20px 120px 20px; /* Tambah padding bawah untuk jaga tombol */
         }
 
         .blur-bg {
@@ -170,8 +170,25 @@
             z-index: -1;
         }
 
-        .btn-continue {
-            margin-top: 30px;
+        .intro-text-box {
+            max-width: 95%;
+            font-size: 1.1rem; /* Fix: Ukuran font sedikit disesuaikan */
+            line-height: 1.6;
+            margin-bottom: 20px;
+            /* Fix: Tambah max-height agar teks panjang tidak menabrak tombol di bawah */
+            max-height: 60vh;
+            overflow-y: auto;
+            scrollbar-width: none; /* Firefox */
+        }
+        .intro-text-box::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        #btn-intro-next {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
             padding: 12px 30px;
             background: var(--deep-rose);
             color: white;
@@ -182,14 +199,16 @@
             font-family: 'Poppins', sans-serif;
             box-shadow: 0 5px 15px rgba(224, 108, 117, 0.4);
             transition: transform 0.2s;
+            z-index: 100; /* Pastikan di atas teks */
+            pointer-events: auto; /* Fix: Pastikan bisa diklik */
         }
 
-        .btn-continue:active {
-            transform: scale(0.95);
+        #btn-intro-next:active {
+            transform: translateX(-50%) scale(0.95);
         }
 
         /* =========================================
-           4. MINI GAME
+           4. MINI GAME (FIXED HIT AREA)
            ========================================= */
         #game-section {
             position: fixed;
@@ -200,7 +219,7 @@
             background: linear-gradient(to bottom, #a18cd1 0%, #fbc2eb 100%);
             z-index: 7000;
             overflow: hidden;
-            touch-action: none; /* Mencegah scroll saat main */
+            touch-action: none;
         }
 
         .game-ui {
@@ -219,11 +238,18 @@
 
         .heart-item {
             position: absolute;
-            font-size: 2rem;
+            font-size: 3rem; /* Fix: Perbesar font agar mudah diklik */
             cursor: pointer;
             user-select: none;
             animation: fall linear forwards;
             filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
+            /* Fix: Perbesar area klik */
+            width: 60px; 
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform-origin: center;
         }
 
         .heart-item:active {
@@ -301,6 +327,7 @@
             animation: popIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             z-index: 2;
+            background-color: #eee; /* Placeholder color */
         }
 
         @keyframes popIn {
@@ -457,6 +484,7 @@
             height: 260px;
             object-fit: cover;
             border: 1px solid #eee;
+            background-color: #f0f0f0;
         }
 
         .polaroid-caption {
@@ -472,7 +500,6 @@
             50% { transform: translateY(-10px) rotate(-2deg); }
         }
 
-        /* Modal Lightbox */
         .lightbox {
             position: fixed;
             top: 0;
@@ -508,26 +535,49 @@
             color: white;
             font-size: 2rem;
             cursor: pointer;
+            user-select: none;
         }
 
         /* =========================================
-           8. SURAT RAHASIA
+           8. SURAT RAHASIA (FIXED OVERFLOW & Z-INDEX)
            ========================================= */
         #letter-section {
-            padding: 80px 20px;
-            min-height: 80vh;
+            padding: 100px 20px; /* Padding lebih besar untuk ruang surat keluar */
+            min-height: 100vh; /* Fix: Pastikan section cukup tinggi */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffd1dc' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            position: relative; 
+            overflow: visible; /* Fix: Biarkan surat bisa keluar dari box section */
+        }
+
+        .letter-overlay {
+            position: fixed; /* Fix: Gunakan Fixed agar cover seluruh layar */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 50; 
+            opacity: 0;
+            pointer-events: none; 
+            transition: opacity 0.5s ease;
+        }
+
+        .letter-overlay.active {
+            opacity: 1;
+            pointer-events: auto; 
         }
 
         .envelope-container {
             cursor: pointer;
             transition: transform 0.3s;
             position: relative;
-            z-index: 5;
+            z-index: 60; 
+            margin-bottom: 100px; /* Ruang di bawah amplop */
         }
 
         .envelope-container:hover {
@@ -546,7 +596,7 @@
             align-items: center;
         }
 
-        .envelope::before { /* Flap atas */
+        .envelope::before { 
             content: '';
             position: absolute;
             top: 0;
@@ -569,6 +619,12 @@
             color: white;
             font-weight: bold;
             z-index: 4;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .envelope.open .envelope-text {
+            opacity: 0;
         }
 
         .letter-paper {
@@ -579,7 +635,7 @@
             background: white;
             padding: 20px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            transition: transform 0.8s ease-out, z-index 0s 0.4s;
+            transition: transform 0.8s ease-out, z-index 0s;
             transform: translateY(0);
             z-index: 1;
             text-align: left;
@@ -591,9 +647,9 @@
         }
 
         .envelope.open .letter-paper {
-            transform: translateY(-250px);
-            z-index: 5;
-            transition-delay: 0.6s; /* Tunggu amplop terbuka */
+            transform: translateY(-280px); /* Naik lebih sedikit */
+            z-index: 100; 
+            transition-delay: 0.6s;
         }
 
         .letter-content h4 {
@@ -696,7 +752,6 @@
             transform: translateY(0);
         }
 
-        /* Confetti */
         .confetti {
             position: absolute;
             width: 10px;
@@ -712,7 +767,7 @@
 
     </style>
 </head>
-<body>
+<body class="noscroll"> <!-- Mulai dengan no scroll -->
 
     <!-- Loading Screen -->
     <div id="loading-screen">
@@ -729,7 +784,7 @@
         <div class="intro-text-box" id="intro-text-container">
             <!-- Teks akan dimasukkan lewat JS -->
         </div>
-        <button id="btn-intro-next" class="btn-continue hidden">Lanjutkan</button>
+        <button id="btn-intro-next" class="hidden">Lanjutkan</button>
     </div>
 
     <!-- Mini Game Section -->
@@ -741,7 +796,6 @@
             <h2>Congratulations.</h2>
             <h2 id="game-sub-msg"></h2>
         </div>
-        <!-- Hati akan muncul lewat JS -->
     </div>
 
     <!-- Konten Utama -->
@@ -750,7 +804,6 @@
         <!-- Hero Section -->
         <section id="hero-section">
             <div class="hero-bg-particles" id="particles-container"></div>
-            <!-- GANTI URL FOTO HERO DISINI -->
             <img src="https://picsum.photos/seed/ecahero/400/400" alt="Eca" class="hero-img">
             <div class="hero-text">
                 <h1 class="fade-in">Selamat Ulang Tahun ke-18 🎂</h1>
@@ -776,6 +829,9 @@
 
         <!-- Secret Letter Section -->
         <section id="letter-section">
+            <!-- Overlay Blur -->
+            <div class="letter-overlay" id="letter-overlay"></div>
+            
             <div class="envelope-container" id="envelope-trigger">
                 <div class="envelope" id="envelope">
                     <div class="envelope-text">Buka saat kamu siap.</div>
@@ -798,7 +854,6 @@
                 <p>Sampai bertemu kembali di tahun ke-19 ✨</p>
                 <p>Terima kasih karena telah membuat dunia menjadi sedikit lebih indah.</p>
 
-                <!-- Countdown ke 19 -->
                 <div class="countdown-box">
                     <div class="time-unit"><span class="time-val" id="days">00</span><span class="time-label">Hari</span></div>
                     <div class="time-unit"><span class="time-val" id="hours">00</span><span class="time-label">Jam</span></div>
@@ -818,17 +873,11 @@
         <img src="" alt="Zoomed Photo" id="lightbox-img">
     </div>
 
-    <!-- Audio (Opsional, siapkan file sendiri jika ingin) -->
-    <!-- <audio id="bg-music" loop>
-        <source src="lagu-favorit.mp3" type="audio/mpeg">
-    </audio> -->
-
     <script>
         // =========================================
         // DATA YANG BISA DIEDIT
         // =========================================
         
-        // 1. Teks Intro Sequence
         const introTexts = [
             "Hai, Ecaa yang berusia 17 tahun...",
             "Thank you for fighting against all the struggles and your silent battles. I am so proud of you, even in the smallest things. You did great, Ecaaw!!",
@@ -838,7 +887,6 @@
             "I just want to say that I'm really proud of her."
         ];
 
-        // 2. 18 Alasan
         const reasons = [
             "Senyummu yang bisa mencerahkan hariku yang paling gelap sekalipun.",
             "Keteguhan hatimu dalam menghadapi setiap rintangan.",
@@ -860,7 +908,6 @@
             "Dan yang terakhir: Karena kamu adalah Eca, dirimu yang sebenarnya sudah lebih dari cukup."
         ];
 
-        // 3. Data Galeri (URL Foto dan Caption)
         const galleryData = [
             { url: "https://picsum.photos/seed/foto1/400/500", caption: "Senyum manis mu ✨" },
             { url: "https://picsum.photos/seed/foto2/400/400", caption: "Momen bahagia 🎉" },
@@ -870,7 +917,6 @@
             { url: "https://picsum.photos/seed/foto6/400/400", caption: "Gadis cantik 👸" }
         ];
 
-        // 4. Isi Surat
         const letterContent = `Dear Eca,
 
 Selamat ulang tahun ke-18. Tak terasa waktu berlalu begitu cepat. Aku menulis ini saat kamu masih 17, namun saat kamu membaca ini, kamu sudah resmi menjadi seorang dewasa.
@@ -897,7 +943,6 @@ Seseorang yang selalu mendukungmu.`;
             const fill = document.getElementById('progress-fill');
             const loadingScreen = document.getElementById('loading-screen');
             
-            // Simulasi loading
             let width = 0;
             const interval = setInterval(() => {
                 if (width >= 100) {
@@ -939,9 +984,8 @@ Seseorang yang selalu mendukungmu.`;
                             textContainer.classList.remove('fade-out');
                             showText();
                         }, 500);
-                    }, 3500); // Waktu baca teks
+                    }, 3500); 
                 } else {
-                    // Selesai intro
                     btnNext.classList.remove('hidden');
                     btnNext.classList.add('fade-in');
                 }
@@ -965,7 +1009,6 @@ Seseorang yang selalu mendukungmu.`;
         function startGame() {
             const gameSection = document.getElementById('game-section');
             gameSection.classList.remove('hidden');
-            
             gameInterval = setInterval(spawnHeart, 800);
         }
 
@@ -975,24 +1018,22 @@ Seseorang yang selalu mendukungmu.`;
             const heart = document.createElement('div');
             heart.classList.add('heart-item');
             heart.innerHTML = '❤️';
-            
-            // Posisi random X
-            const leftPos = Math.random() * 80 + 10; // 10% - 90%
+            const leftPos = Math.random() * 85 + 5; // Fix: Jangan terlalu pinggir
             heart.style.left = leftPos + '%';
-            heart.style.top = '-50px';
-            
-            // Kecepatan random
-            const duration = Math.random() * 2 + 2; // 2s - 4s
+            heart.style.top = '-60px'; // Fix: Mulai dari atas layar
+            const duration = Math.random() * 2 + 2; 
             heart.style.animationDuration = duration + 's';
 
-            // Event Click / Touch
-            heart.addEventListener('mousedown', () => catchHeart(heart));
+            // Fix: Gunakan touchstart agar lebih responsif di HP
             heart.addEventListener('touchstart', (e) => {
-                e.preventDefault(); // cegah double tap zoom
+                e.preventDefault();
+                catchHeart(heart);
+            }, {passive: false});
+
+            heart.addEventListener('mousedown', (e) => {
                 catchHeart(heart);
             });
 
-            // Hapus jika tidak kena
             setTimeout(() => {
                 if(heart.parentNode) heart.parentNode.removeChild(heart);
             }, duration * 1000);
@@ -1002,16 +1043,12 @@ Seseorang yang selalu mendukungmu.`;
 
         function catchHeart(heart) {
             if(heart.classList.contains('caught')) return;
-            
             score++;
             heart.classList.add('caught');
-            heart.innerHTML = '✨'; // Ganti jadi sparkle
+            heart.innerHTML = '✨'; 
             heart.style.transform = 'scale(1.5)';
             heart.style.opacity = '0';
-            
             document.getElementById('score-display').innerText = `${score}/${targetScore} ❤️`;
-
-            // Hapus elemen
             setTimeout(() => {
                 if(heart.parentNode) heart.parentNode.removeChild(heart);
             }, 300);
@@ -1025,9 +1062,7 @@ Seseorang yang selalu mendukungmu.`;
         function finishGame() {
             const gameMsg = document.getElementById('game-msg');
             const subMsg = document.getElementById('game-sub-msg');
-            
             gameMsg.classList.remove('hidden');
-            
             setTimeout(() => {
                 subMsg.innerHTML = "You made it.<br>Welcome to chapter 18.";
                 subMsg.classList.add('fade-in');
@@ -1048,13 +1083,14 @@ Seseorang yang selalu mendukungmu.`;
             mainContent.classList.remove('hidden');
             mainContent.classList.add('fade-in');
             
+            // Fix: Aktifkan scroll body
+            document.body.classList.remove('noscroll');
+            
             initParticles();
             initReasons();
             initGallery();
             initLetter();
             initOutro();
-            
-            // Scroll ke atas
             window.scrollTo(0,0);
         }
 
@@ -1090,22 +1126,18 @@ Seseorang yang selalu mendukungmu.`;
                         </div>
                     </div>
                 `;
-                
-                // Flip interaction
                 card.addEventListener('click', function() {
                     this.classList.toggle('flipped');
                     if(this.classList.contains('flipped')){
                         createSparkle(this);
                     }
                 });
-                
                 container.appendChild(card);
             });
         }
 
         function createSparkle(element) {
             const rect = element.getBoundingClientRect();
-            // Buat beberapa efek bintang di sekitar kartu
             for(let i=0; i<5; i++){
                 const sparkle = document.createElement('div');
                 sparkle.className = 'sparkle';
@@ -1130,58 +1162,79 @@ Seseorang yang selalu mendukungmu.`;
                     <img src="${item.url}" alt="Foto">
                     <div class="polaroid-caption">${item.caption}</div>
                 `;
-                
                 polaroid.addEventListener('click', () => {
                     lightboxImg.src = item.url;
                     lightbox.classList.add('active');
                 });
-                
                 container.appendChild(polaroid);
             });
 
-            // Lightbox controls
             closeBtn.addEventListener('click', () => lightbox.classList.remove('active'));
             lightbox.addEventListener('click', (e) => {
                 if(e.target === lightbox) lightbox.classList.remove('active');
             });
         }
 
-        /* --- Letter Typewriter --- */
+        /* --- Letter Logic --- */
         function initLetter() {
             const trigger = document.getElementById('envelope-trigger');
+            const overlay = document.getElementById('letter-overlay');
             const envelope = document.getElementById('envelope');
             const textElement = document.getElementById('typewriter-text');
             
-            trigger.addEventListener('click', () => {
-                envelope.classList.add('open');
-                
-                // Typewriter effect setelah amplop terbuka
-                setTimeout(() => {
-                    typeWriter(textElement, letterContent, 50);
-                }, 800); // delay tunggu amplop terbuka
-            });
-        }
+            let isOpen = false;
+            let typingInterval;
 
-        function typeWriter(element, text, speed) {
-            let i = 0;
-            element.innerHTML = "";
-            function type() {
-                if (i < text.length) {
-                    if (text.charAt(i) === "\n") {
-                        element.innerHTML += "<br>";
-                    } else {
-                        element.innerHTML += text.charAt(i);
+            function startTypewriter() {
+                textElement.innerHTML = "";
+                let i = 0;
+                function type() {
+                    if (i < letterContent.length) {
+                        if (letterContent.charAt(i) === "\n") {
+                            textElement.innerHTML += "<br>";
+                        } else {
+                            textElement.innerHTML += letterContent.charAt(i);
+                        }
+                        i++;
+                        typingInterval = setTimeout(type, 50);
                     }
-                    i++;
-                    setTimeout(type, speed);
                 }
+                type();
             }
-            type();
+
+            function openEnvelope() {
+                isOpen = true;
+                envelope.classList.add('open');
+                overlay.classList.add('active');
+                startTypewriter();
+            }
+
+            function closeEnvelope() {
+                isOpen = false;
+                envelope.classList.remove('open');
+                overlay.classList.remove('active');
+                clearTimeout(typingInterval);
+                setTimeout(() => {
+                    textElement.innerHTML = "";
+                }, 600);
+            }
+
+            trigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!isOpen) {
+                    openEnvelope();
+                }
+            });
+
+            overlay.addEventListener('click', () => {
+                if (isOpen) {
+                    closeEnvelope();
+                }
+            });
         }
 
         /* --- Outro & Countdown --- */
         function initOutro() {
-            // 1. Stars Background
             const starContainer = document.getElementById('stars-container');
             for(let i=0; i<50; i++) {
                 const star = document.createElement('div');
@@ -1194,13 +1247,11 @@ Seseorang yang selalu mendukungmu.`;
                 starContainer.appendChild(star);
             }
 
-            // 2. Confetti Trigger saat scroll sampai sini
             const outroSection = document.getElementById('outro-section');
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if(entry.isIntersecting) {
                         launchConfetti();
-                        // Tampilkan pesan final setelah delay
                         setTimeout(() => {
                             document.getElementById('final-msg').classList.add('show');
                         }, 2000);
@@ -1211,8 +1262,6 @@ Seseorang yang selalu mendukungmu.`;
             
             observer.observe(outroSection);
 
-            // 3. Countdown Logic (Target 1 tahun dari sekarang sebagai placeholder)
-            // Ganti tanggal di bawah dengan tanggal ultah tahun depan
             const nextBirthday = new Date(); 
             nextBirthday.setFullYear(nextBirthday.getFullYear() + 1); 
             
@@ -1241,9 +1290,7 @@ Seseorang yang selalu mendukungmu.`;
                 confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                 confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
                 confetti.style.opacity = Math.random();
-                
                 document.getElementById('outro-section').appendChild(confetti);
-                
                 setTimeout(() => confetti.remove(), 5000);
             }
         }
